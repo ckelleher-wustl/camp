@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="/public/stylesheets/style.css">
+  </head>
+
+  <body>
+
+    <div id="camp">
+        <div id="header">
+            <h1>Community's Awesome Math Practice</h1>
+            <h3>(a.k.a. C.A.M.P.)</h3>
+        </div>
+
+        <div id="start_screen" class="content_parent">
+            <div class="content_child">
+                <div class="button_row">
+                    <div class="button_div_col1">
+                        <button class="camp_button camp_button-addition" onclick="showProblems(true)">Practice Addition</button>
+                    </div>
+                    <div class="button_div_col2">
+                        <button class="camp_button camp_button-subtraction">Practice Subtraction</button>
+                    </div>
+                </div>
+                <div class="button_row">
+                    <div class="button_div_col1">
+                        <button class="camp_button camp_button-multiplication">Practice Multiplication</button>
+                    </div>
+                    <div class="button_div_col2">
+                        <button class="camp_button camp_button-division">Practice Division</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="problem_screen" class="content_parent" style="display: none;">
+            <div class="content_child">
+
+                <h1> What is: </h1>
+
+                <div style="margin-top: 100px; margin-bottom: 100px; text-align: center;">
+                    <label id="problem" style="font-size: x-large; padding: 20px;" >17 + 3 = </label>
+                    <input id="answer" type="text" size="3">
+                </div>
+                <div style="float: right;">
+                    <button class="camp_button camp_button_confirm" onclick="showFeedback()">Check</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="feedback_screen" class="content_parent" style="display: none">
+            <div class="content_child">
+                <img id="feedback_image" src="public/images/success_0.png" width="500">
+
+                <div style="float: right;">
+                    <button class="camp_button camp_button_confirm" onclick="handleNext()">Next</button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div id="footer">
+            <h3>Lotta Luster Edition</h3>
+        </div>
+
+    </div>
+
+    <script type = "text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  
+    <script>
+        var currentProblem;
+
+        function showProblems(makeNewProblem) {
+            // console.log("trying to hide start screen");
+            $( "#start_screen" ).css("display","none");
+            $( "#problem_screen" ).css("display", "block");
+            $( "#feedback_screen" ).css("display","none");
+
+            if (makeNewProblem) {
+                currentProblem = getAddition();
+            }
+            $( "#problem" ).empty();
+            $( "#problem" ).append(currentProblem[0]);
+        }
+
+        function showFeedback() {
+            // console.log("trying to hide problem screen");
+            $( "#start_screen" ).css("display","none");
+            $( "#problem_screen" ).css("display","none");
+            $( "#feedback_screen" ).css("display", "block");
+
+            var answer =  $( "#answer" ).val();
+
+            // answer is correct
+            if (answer.toString() == currentProblem[1]){
+                var successImageNumber = getNiceNumber(15);
+                console.log("we're getting image number " + successImageNumber);
+                $( "#feedback_image" ).attr("src","public/images/success_" + successImageNumber + ".png");
+            } else {
+                $( "#feedback_image" ).attr("src","public/images/failure_0.png");
+            }
+            console.log("answer is " + answer);
+        }
+
+        function handleNext() {
+            // answer is correct
+            var answer =  $( "#answer" ).val();
+            if (answer.toString() == currentProblem[1]){
+                showStart();
+            } else {
+                $( "#answer" ).val("");
+                showProblems(false);
+            }
+        }
+
+        function showStart() {
+            // console.log("trying to hide feedback screen");
+            $( "#feedback_screen" ).css("display","none");
+            $( "#start_screen" ).css("display", "block");
+            $( "#problem_screen" ).css("display","none");
+
+            $( "#answer" ).val("");
+        }
+
+        function getAddition() {
+            var a = getNiceNumber(100);
+            var b = getNiceNumber(100);
+
+            // console.log("my problem is " + a + " + " + b);
+            return [a + " + " + b + " = ", (a + b)];
+        }
+
+        function getNiceNumber(max) {
+            var randomNumber = Math.random() * max;
+            randomNumber = Math.floor(randomNumber);
+
+            return randomNumber;
+        }
+
+    </script>
+
+
+  </body>
+
+</html>
