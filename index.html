@@ -70,6 +70,15 @@
     <script>
         var currentProblem;
 
+        
+        // Execute a function when the user presses a key on the keyboard
+        $( "#answer" ).on("keypress", function(event) {
+            // If the user presses the "Enter" key on the keyboard
+            if (event.key === "Enter") {
+                showFeedback();
+            }
+        });
+
         function showProblems(makeNewProblem) {
             // console.log("trying to hide start screen");
             $( "#start_screen" ).css("display","none");
