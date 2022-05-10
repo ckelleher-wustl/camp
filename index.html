@@ -17,18 +17,18 @@
             <div class="content_child">
                 <div class="button_row">
                     <div class="button_div_col1">
-                        <button class="camp_button camp_button-addition" onclick="showProblems(true)">Practice Addition</button>
+                        <button class="camp_button camp_button-addition" onclick="startProblemSet('+')">Practice Addition</button>
                     </div>
                     <div class="button_div_col2">
-                        <button class="camp_button camp_button-subtraction">Practice Subtraction</button>
+                        <button class="camp_button camp_button-subtraction" onclick="startProblemSet('-')">Practice Subtraction</button>
                     </div>
                 </div>
                 <div class="button_row">
                     <div class="button_div_col1">
-                        <button class="camp_button camp_button-multiplication">Practice Multiplication</button>
+                        <button class="camp_button camp_button-multiplication" onclick="startProblemSet('*')">Practice Multiplication</button>
                     </div>
                     <div class="button_div_col2">
-                        <button class="camp_button camp_button-division">Practice Division</button>
+                        <button class="camp_button camp_button-division" onclick="startProblemSet('/')">Practice Division</button>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,8 @@
     <script type = "text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  
     <script>
         var currentProblem;
+        var numberProblemsCompleted = 0;
+        var problemType = "+";
 
         
         // Execute a function when the user presses a key on the keyboard
@@ -79,14 +81,34 @@
             }
         });
 
+        function startProblemSet(type) {
+            problemType = type;
+            showProblems(true);
+        }
+
+        // problem type should be + - x and /
         function showProblems(makeNewProblem) {
             // console.log("trying to hide start screen");
             $( "#start_screen" ).css("display","none");
             $( "#problem_screen" ).css("display", "block");
             $( "#feedback_screen" ).css("display","none");
 
+            // clear the answer box in case there's a previous answer
+            $( "#answer" ).val("");
+            $( "#answer" ).focus();
+
             if (makeNewProblem) {
-                currentProblem = getAddition();
+                if (problemType == "+") {
+                    currentProblem = getAddition();
+                } else if (problemType == "-") {
+                    currentProblem = getSubtraction();
+                } else if (problemType == "*") {
+                    currentProblem = getMultiplication();
+                } else if (problemType == "/") {
+                    currentProblem = getDivision();
+                }else {
+                    console.log("UNKNOWN PROBLEM TYPE " + problemType);
+                }
             }
             $( "#problem" ).empty();
             $( "#problem" ).append(currentProblem[0]);
@@ -105,19 +127,26 @@
                 var successImageNumber = getNiceNumber(15);
                 console.log("we're getting image number " + successImageNumber);
                 $( "#feedback_image" ).attr("src","public/images/success_" + successImageNumber + ".png");
+
+                numberProblemsCompleted = numberProblemsCompleted + 1;
             } else {
                 $( "#feedback_image" ).attr("src","public/images/failure_0.png");
             }
-            console.log("answer is " + answer);
+            // console.log("answer is " + answer);
         }
 
         function handleNext() {
-            // answer is correct
             var answer =  $( "#answer" ).val();
+            // answer is correct
             if (answer.toString() == currentProblem[1]){
-                showStart();
+
+                if (numberProblemsCompleted >= 5) {
+                    showStart();
+                    numberProblemsCompleted = 0;
+                } else {
+                    showProblems(true);
+                }
             } else {
-                $( "#answer" ).val("");
                 showProblems(false);
             }
         }
@@ -137,6 +166,34 @@
 
             // console.log("my problem is " + a + " + " + b);
             return [a + " + " + b + " = ", (a + b)];
+        }
+
+        function getSubtraction() {
+            var a = getNiceNumber(100);
+            var b = getNiceNumber(a);
+
+            return [a + " - " + b + " = ", (a - b)];
+        }
+
+        function getMultiplication() {
+            var a = getNiceNumber(6);
+            if (a == 6) {
+                a = 10;
+            }
+            var b = getNiceNumber(10);
+
+            return [a + " X " + b + " = ", (a * b)];
+        }
+
+        function getDivision() {
+            var a = getNiceNumber(5);
+            a = a + 1;
+            if (a == 6) {
+                a = 10;
+            }
+            var b = getNiceNumber(10);
+
+            return [(a * b) + " &#247; " + a + " = ", b];
         }
 
         function getNiceNumber(max) {
